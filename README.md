@@ -87,6 +87,27 @@ pytest -v
 
 The tests cover both `demo.py` and `app.py` to keep the CLI and web app numerically aligned.
 
+## Appendix: the Corporate Briefing Room (non-technical analogy)
+
+If you need to explain this to a client or stakeholder who doesn't live in matrices, swap the math for an office.
+
+Imagine a brilliant but impossibly busy **CEO** who never reads raw customer emails. They rely on an **Expert Research Assistant** to scan the mess, highlight what matters, and hand over a clean memo.
+
+| In the briefing room | In the model |
+|----------------------|--------------|
+| Messy raw customer emails in the inbox | **Raw tokens** (the prompt) |
+| The Research Assistant scanning + filtering | **The attention mechanism** |
+| The 1-page briefing memo | **The context vector** |
+| The CEO's brain / business instincts | **The model weights** |
+| The onboarding process | **Gradient descent** (training) |
+| The final executive decision | **Softmax** |
+
+- **Why training uses attention.** The CEO didn't go to business school alone — the Assistant sat right next to them the whole time. Across thousands of practice scenarios, the Assistant read the raw file and handed over a memo (context vector), the CEO guessed, and got corrected. The CEO's brain never learned to read raw text; it learned **how to read the Assistant's memos.**
+- **The word swap ("fastest" vs. "safest").** The CEO's brain is frozen, but a one-word change makes the Assistant write a different memo — one screaming *"SPEED!"*, the other *"SECURITY!"* The same instincts read each memo and land on Redis vs. Postgres. No brain transplant; just different highlights. (This is the single-word swap in [`demo.py`](demo.py).)
+- **Flipping belief, 50% → 98%.** Day 1, the CEO guesses wrong and eats a penalty. By the 20th time the same memo arrives, the correction has stacked up and the CEO slams the desk: *"Redis, 98% certainty!"* That's the [`datasets/repeated_fastest.json`](datasets/repeated_fastest.json) story in plain English.
+
+The framing works because it separates **the person reading** (attention) from **the person deciding** (weights): an LLM isn't thinking from scratch each time — it's a pipeline passing optimized briefing memos down the line. The full version lives in [blog.md](blog.md#appendix-b-the-corporate-briefing-room-a-non-technical-analogy).
+
 ## Next steps: from toy to real
 
 This repo is a single-head, single-layer, hand-weighted demo on purpose — the right zoom level to internalize Q/K/V and gradient descent. When you're ready to scale up:

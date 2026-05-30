@@ -132,3 +132,62 @@ When the **Softmax** function turns the model's final raw scores into probabilit
 
 **3. Distinct Filters: Generating Query, Key, and Value**
 While the Attention mechanism uses the model's weights to evaluate your words, it does so by creating three distinct representations for every token. The model mathematically multiplies your input prompt by three *different* sets of learned weights to generate the **Query**, **Key**, and **Value**. You can think of these separate weight matrices as three unique mathematical filters that transform the exact same input word into three distinct tools for the attention spotlight to use.
+
+----
+
+### Appendix B: The Corporate Briefing Room (A Non-Technical Analogy)
+
+The mechanics above are precise, but they can be hard to hand to a client, a teammate, or a stakeholder who doesn't live in matrices. Here's the same story told as an office, not an equation.
+
+#### The cast
+
+Imagine a massive company run by a **CEO** who is brilliant but impossibly busy. The CEO never reads raw, messy customer emails or thousand-page market reports. Instead, they rely on an **Expert Research Assistant** whose entire job is to scan the mess, highlight what matters, and filter out the noise.
+
+| In the briefing room | In the model |
+|----------------------|--------------|
+| The messy raw customer emails landing in the inbox | **Raw tokens** (the prompt) |
+| The **Research Assistant** scanning, highlighting, filtering | **The attention mechanism** |
+| The **1-page briefing memo** handed to the CEO | **The context vector** |
+| The **CEO's brain / business instincts** | **The model weights** |
+| The **onboarding process** where the CEO learns the job | **Gradient descent** (training) |
+| The **final executive decision** (Option A vs. Option B) | **Softmax** |
+
+#### 1. Untangling the "Missing Link" — why training uses attention
+
+When people get confused about training, they assume the CEO went to business school (training) by reading raw text, and only *later* hired the Assistant. That's the same mistake as assuming training doesn't use attention.
+
+The reality: **the CEO went to school with the Assistant sitting right next to them.**
+
+During onboarding (**gradient descent**), a mentor threw thousands of practice scenarios at the pair. In every single scenario, the Assistant read the raw file and handed the CEO a **briefing memo (context vector)**. The CEO glanced at the memo, guessed a decision, and got corrected when wrong. Over time, the CEO's brain (**weights**) never learned to read raw text. It learned **how to interpret the Assistant's memos.**
+
+> **Non-tech takeaway:** The context vector is a shared shorthand language. The Assistant knows how to turn a prompt into a memo; the permanent weights know exactly how to read that memo to make a decision.
+
+#### 2. The word swap — "fastest" vs. "safest" (dynamic routing)
+
+How do you change the AI's mind without changing its brain? Two emails arrive:
+
+* **Email 1:** "We need a database setup. It has to be the **fastest** thing on the market."
+* **Email 2:** "We need a database setup. It has to be the **safest** thing on the market."
+
+The CEO's brain (**weights**) is completely frozen — not learning anything new today. But that one-word change makes the Assistant (**attention**) write two completely different **memos**:
+
+* **Memo 1** screams: *"SPEED IS THE ONLY THING THAT MATTERS!"*
+* **Memo 2** screams: *"SECURITY AND DATA INTEGRITY ARE THE ONLY THINGS THAT MATTER!"*
+
+Reading Memo 1, the CEO's permanent instincts say *"Go with Redis."* Reading Memo 2, those *exact same* instincts say *"Go with Postgres."*
+
+> **Non-tech takeaway:** No brain transplant happened. The permanent knowledge was identical both times. The Assistant simply highlighted different variables, dynamically routing the context so the same brain reached a different conclusion. (This is exactly what the single-word swap in [`demo.py`](https://github.com/ranfysvalle02/attention-and-weights/blob/main/demo.py) demonstrates.)
+
+#### 3. The magic of flipping belief — 50% to 98% confidence
+
+How does a model "learn" a fact during training?
+
+On Day 1 of onboarding, the Assistant hands the CEO a memo: *"Speed is critical."* The CEO has random instincts and guesses: *"Uh… Postgres?"* The mentor snaps: *"Wrong. 20-point penalty. The answer is Redis."* (**Gradient descent** calculates the error.)
+
+The next day, the same memo arrives. The CEO guesses Redis, but hesitantly — 50% confidence. The mentor nods: *"Good. Keep going."* By the 20th time this exact loop runs, the correction has stacked up so much that the paths in the CEO's brain have hardened. The next time that specific memo lands, the CEO doesn't hesitate — they slam the desk: *"Redis, 98% certainty!"* (**Softmax** squashes the other options to near 0%.)
+
+> **Non-tech takeaway:** This is the [`datasets/repeated_fastest.json`](https://github.com/ranfysvalle02/attention-and-weights/blob/main/datasets/repeated_fastest.json) story in plain English — the same memo, the same correction, repeated until it dominates.
+
+#### Why this framing works
+
+It removes the "magic" by separating **the person doing the reading** (attention) from **the person making the choice** (weights). It helps non-technical audiences see that an LLM isn't "thinking" dynamically from scratch every time — it's an efficient corporate pipeline passing highly optimized briefing memos down the line.
