@@ -17,6 +17,8 @@ I used to think **training did not use attention** — and that confusion is wha
 
 Attention is the **representation layer** between raw tokens and the output decision. Training doesn't learn to read tokens directly — it learns to read attention's *output*. The **context vector** is the shared language between the transient (prompt-dependent) and permanent (weight-dependent) systems.
 
+> Training doesn't learn to read tokens directly; it learns to read attention's output
+
 ## Latest demo
 
 A pure-Python implementation of the **attention mechanism, Q/K/V projections, and a gradient descent loop** — using only Python's standard `math` library. It demonstrates how changing **"fastest"** to **"safest"** alters the context vector and **flips the output (Redis vs. Postgres)** *without changing the frozen weights* — showing how attention dynamically routes context by reshaping the question, not the knowledge.
