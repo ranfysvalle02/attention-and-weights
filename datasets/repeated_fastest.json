@@ -1,0 +1,26 @@
+{
+  "name": "repeated_fastest",
+  "description": "The simplest possible training story: the same sentence repeated many times. Each example creates the same context vector and the same error signal, and gradient descent moves W_OUTPUT toward the repeated target.",
+  "examples": [
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" },
+    { "text": "the fastest database is Redis" }
+  ]
+}

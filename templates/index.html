@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Attention &amp; Weights — Live Demo</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <nav class="topbar">
+    <div class="brand">
+      <span class="brand-mark">A·W</span>
+      <div class="brand-text">
+        <span class="brand-title">Attention &amp; Weights</span>
+        <span class="brand-sub">Frozen weights · dynamic routing</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-retrain" id="btn-open-retrain">Training runs</button>
+    </div>
+  </nav>
+
+  <!-- ========== SECTION: PIPELINE ========== -->
+  <section class="page active" id="page-pipeline">
+    <header class="pipeline-header">
+      <div class="pipeline-title">
+        <h1>Two ways to change the answer.</h1>
+        <p class="dim">The model's knowledge lives in <strong>frozen weights</strong>. Attention decides what to do <em>right now</em>; training reshapes what it knows <em>over time</em>. They meet at one place — the <strong>context vector</strong>.</p>
+      </div>
+    </header>
+
+    <!-- The two levers: the whole thesis in one strip -->
+    <div class="levers">
+      <div class="lever lever-now">
+        <span class="lever-tag"><span class="lever-dot dynamic"></span>Right now · attention</span>
+        <p>Change the <strong>word</strong> below. Attention re-routes the same frozen knowledge into a new context vector, and the answer flips. <em>Nothing is learned.</em></p>
+      </div>
+      <div class="lever-bridge" aria-hidden="true">
+        <span>context<br/>vector</span>
+      </div>
+      <div class="lever lever-time">
+        <span class="lever-tag"><span class="lever-dot frozen"></span>Over time · training</span>
+        <p>Open <strong>Training runs</strong> above and switch datasets. Gradient descent taught the output weights to read that same context vector differently. <em>The belief itself moves.</em></p>
+      </div>
+    </div>
+
+    <div class="prompt-bar">
+      <div class="prompt-main">
+        <span class="prompt-label">PROMPT</span>
+        <div class="prompt-tokens" id="prompt-tokens">
+          <span class="ptok" data-idx="0">the</span>
+          <span class="ptok editable" data-idx="1" id="adj-token">fastest</span>
+          <span class="ptok" data-idx="2">database</span>
+          <span class="ptok" data-idx="3">is</span>
+          <span class="ptok blank">___</span>
+        </div>
+      </div>
+      <div class="adj-picker-wrap">
+        <span class="lever-mini">Lever 1 · swap the word</span>
+        <div class="adj-picker" id="adj-picker" role="group" aria-label="Adjective">
+          <button class="adj active" data-adj="fastest">fastest</button>
+          <button class="adj" data-adj="safest">safest</button>
+          <button class="adj" data-adj="best">best</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow" id="flow">
+      <!-- Stage 1: Embeddings -->
+      <div class="stage" id="stage-embed">
+        <div class="stage-head">
+          <span class="stage-num">1</span>
+          <div>
+            <div class="stage-label">Embed</div>
+            <div class="stage-desc">Tokens → 4D vectors</div>
+          </div>
+          <span class="tag tag-frozen" title="Stored in the model">frozen</span>
+        </div>
+        <div class="embed-grid" id="embed-grid"></div>
+      </div>
+
+      <div class="flow-arrow"><svg viewBox="0 0 40 24" width="40" height="24"><path d="M4 12h28m-7-6 7 6-7 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+      <!-- Stage 2: Q/K/V Projections -->
+      <div class="stage stage-wide" id="stage-qkv">
+        <div class="stage-head">
+          <span class="stage-num">2</span>
+          <div>
+            <div class="stage-label">Project</div>
+            <div class="stage-desc">Embed × W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub></div>
+          </div>
+          <span class="tag tag-frozen">frozen</span>
+        </div>
+        <div class="qkv-cols" id="qkv-cols">
+          <div class="qkv-col">
+            <span class="qkv-title q-color">Query<small>last token</small></span>
+            <div class="mini-vec" id="vec-q"></div>
+          </div>
+          <div class="qkv-col">
+            <span class="qkv-title k-color">Keys</span>
+            <div class="mini-vecs" id="vecs-k"></div>
+          </div>
+          <div class="qkv-col">
+            <span class="qkv-title v-color">Values</span>
+            <div class="mini-vecs" id="vecs-v"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-arrow"><svg viewBox="0 0 40 24" width="40" height="24"><path d="M4 12h28m-7-6 7 6-7 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+      <!-- Stage 3: Attention -->
+      <div class="stage" id="stage-attn">
+        <div class="stage-head">
+          <span class="stage-num">3</span>
+          <div>
+            <div class="stage-label">Attend</div>
+            <div class="stage-desc">Q · K → softmax · V</div>
+          </div>
+          <span class="tag tag-dynamic">dynamic</span>
+        </div>
+        <div class="attn-viz" id="attn-viz"></div>
+        <div class="context-row context-bridge">
+          <span class="ctx-label">context vector</span>
+          <div class="mini-vec" id="vec-ctx"></div>
+        </div>
+        <div class="ctx-caption">The shared language: attention writes it, the weights read it.</div>
+      </div>
+
+      <div class="flow-arrow"><svg viewBox="0 0 40 24" width="40" height="24"><path d="M4 12h28m-7-6 7 6-7 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+      <!-- Stage 4: Output -->
+      <div class="stage" id="stage-output">
+        <div class="stage-head">
+          <span class="stage-num">4</span>
+          <div>
+            <div class="stage-label">Predict</div>
+            <div class="stage-desc">context · W<sub>out</sub> → softmax</div>
+          </div>
+          <span class="tag tag-frozen">frozen</span>
+        </div>
+        <div class="output-viz" id="output-viz"></div>
+        <div class="prediction-box" id="prediction-box">
+          <span class="pred-label">prediction</span>
+          <div class="pred-main">
+            <span class="pred-token" id="pred-token">Redis</span>
+            <span class="pred-conf" id="pred-conf">—</span>
+          </div>
+          <div class="pred-meter"><div class="pred-meter-fill" id="pred-meter-fill"></div></div>
+        </div>
+        <div class="belief-flag" id="belief-flag"></div>
+      </div>
+    </div>
+
+    <footer class="pipeline-footer single">
+      <div class="insight" id="insight">
+        <span class="insight-label">why?</span>
+        <span class="insight-text" id="insight-text">Loading…</span>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ========== MODAL: RE-TRAIN ========== -->
+  <div class="modal-overlay" id="retrain-modal">
+    <div class="modal-content">
+      <header class="modal-header">
+        <div>
+          <h2>How was the model trained? <span class="modal-tag">over time</span></h2>
+          <p class="modal-sub">Pick a training run. Each is a fixed dataset pushed through gradient descent, reading the <strong>same context vector</strong> attention produces. Switch between them and watch the belief move — same words, different answer.</p>
+        </div>
+        <button class="btn-close" id="btn-close-modal" aria-label="Close">&times;</button>
+      </header>
+      <div class="modal-body">
+        <div class="preset-grid" id="preset-grid">
+          <!-- JS populates preset cards here -->
+        </div>
+
+        <div class="train-results" id="train-results" style="display: none;">
+          <div class="belief-readout" id="belief-readout"></div>
+          <div class="train-chart-card" id="train-chart-card">
+            <div class="chart-title">
+              <span id="train-chart-title">Confidence climbs as examples repeat</span>
+              <div class="chart-legend">
+                <span><span class="dot loss"></span>error</span>
+                <span><span class="dot redis"></span>P(Redis)</span>
+                <span><span class="dot postgres"></span>P(Postgres)</span>
+              </div>
+            </div>
+            <div class="train-chart" id="train-chart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

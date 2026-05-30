@@ -1,0 +1,26 @@
+{
+  "name": "repeated_safest",
+  "description": "Mirror of repeated_fastest, pointing at Postgres. Useful for showing that the mechanism is direction-agnostic: whichever answer is repeated is the one the output weights learn to favor.",
+  "examples": [
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" },
+    { "text": "the safest database is Postgres" }
+  ]
+}
